@@ -1,0 +1,36 @@
+# 服务配置
+server:
+  # 服务器的HTTP端口
+  port: 8080
+  servlet:
+    # 应用的访问路径
+    context-path: /
+
+# Spring配置
+spring:
+  # 项目名称配置
+  application:
+    name: ylanTakeaway
+  # 数据库配置
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://192.168.131.130:3306/ylan_takeaway?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      username: root
+      password: root
+
+# Mybatis-Plus配置
+mybatis-plus:
+  configuration:
+    # 在映射实体或者属性时，将数据库中表名和字段名中的下划线去掉，按照驼峰命名法映射
+    map-underscore-to-camel-case: true
+    # 日志规则
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      # 主键类型
+      id-type: ASSIGN_ID
+
+# 文件上传路径
+ylanTakeaway:
+  path: G:\Coding\java\ylanTakeaway\upload\img
