@@ -1,24 +1,25 @@
 package com.ylan.ylantakeaway.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 员工信息
- *
  * @author by ylan
- * @TableName employee
+ * @date 2022-12-22 20:25
  */
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class Employee implements Serializable {
+public class SetmealDish implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -28,39 +29,34 @@ public class Employee implements Serializable {
     private Long id;
 
     /**
-     * 姓名
+     * 套餐id
+     */
+    private Long setmealId;
+
+    /**
+     * 菜品id
+     */
+    private Long dishId;
+
+    /**
+     * 菜品名称 （冗余字段）
      */
     private String name;
 
     /**
-     * 用户名
+     * 菜品原价
      */
-    private String username;
+    private BigDecimal price;
 
     /**
-     * 密码
+     * 份数
      */
-    private String password;
+    private Integer copies;
 
     /**
-     * 手机号  13633389837
+     * 排序
      */
-    private String phone;
-
-    /**
-     * 性别
-     */
-    private String sex;
-
-    /**
-     * 身份证号 410522200103555555
-     */
-    private String idNumber;
-
-    /**
-     * 状态 0:禁用，1:正常
-     */
-    private Integer status;
+    private Integer sort;
 
     /**
      * 创建时间
@@ -87,5 +83,10 @@ public class Employee implements Serializable {
      */
     @TableField(value = "update_user", fill = FieldFill.INSERT_UPDATE)
     private Long updateUser;
+
+    /**
+     * 是否删除
+     */
+    private Integer isDeleted;
 
 }

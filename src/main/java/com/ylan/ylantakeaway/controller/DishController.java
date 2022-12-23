@@ -1,5 +1,6 @@
 package com.ylan.ylantakeaway.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ylan.ylantakeaway.common.R;
 import com.ylan.ylantakeaway.dto.DishDto;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 菜品控制器
@@ -80,6 +82,20 @@ public class DishController {
     }
 
     /**
+     * 菜品删除
+     *
+     * @param ids
+     * @return
+     */
+    @DeleteMapping
+    public R<String> deleteDish(@RequestParam(value = "ids", required = true) Long[] ids) {
+        for (Long id : ids) {
+            log.info("菜品{}删除", id);
+        }
+        return dishService.deleteDish(ids);
+    }
+
+    /**
      * 菜品启售和停售
      *
      * @param status
@@ -106,16 +122,19 @@ public class DishController {
     }
 
     /**
-     * 菜品删除
+     * 根据categoryId或者name获取菜品
      *
-     * @param ids
+     * @param categoryId
      * @return
      */
-    @DeleteMapping
-    public R<String> deleteDish(@RequestParam(value = "ids", required = true) Long[] ids) {
-        for (Long id : ids) {
-            log.info("菜品{}删除", id);
-        }
-        return dishService.deleteDish(ids);
+    @GetMapping("/list")
+    public R<List<Dish>> list(@RequestParam(value = "categoryId", required = false) Long categoryId, @RequestParam(value = "name", required = false) String name) {
+        log.info("根据categoryId或者name获取菜品{},{}", categoryId, name);
+        // 添加查询条件
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(categoryId != null, Dish::getCategoryId, categoryId).like(name != null, Dish::getName, name).eq(Dish::getStatus, 1).orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+        // 查询数据
+        List<Dish> list = dishService.list(queryWrapper);
+        return R.success(list);
     }
 }

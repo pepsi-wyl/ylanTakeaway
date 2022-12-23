@@ -187,12 +187,10 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         // 批量删除菜品信息
         this.removeByIds(Arrays.asList(ids));
 
-        // 删除菜品口位信息
-        for (Long id : ids) {
-            LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.eq(DishFlavor::getDishId, id);
-            dishFlavorService.remove(queryWrapper);
-        }
+        // 批量删除菜品口位信息
+        LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(DishFlavor::getDishId, ids);
+        dishFlavorService.remove(queryWrapper);
 
         return R.success("菜品删除成功");
     }
