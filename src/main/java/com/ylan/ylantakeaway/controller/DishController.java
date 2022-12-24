@@ -5,13 +5,17 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ylan.ylantakeaway.common.R;
 import com.ylan.ylantakeaway.dto.DishDto;
 import com.ylan.ylantakeaway.entity.Dish;
+import com.ylan.ylantakeaway.entity.DishFlavor;
+import com.ylan.ylantakeaway.service.DishFlavorService;
 import com.ylan.ylantakeaway.service.DishService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 菜品控制器
@@ -30,6 +34,8 @@ public class DishController {
      */
     @Autowired
     private DishService dishService;
+    @Autowired
+    private DishFlavorService dishFlavorService;
 
     /**
      * 添加菜品
@@ -127,14 +133,33 @@ public class DishController {
      * @param categoryId
      * @return
      */
+//    @GetMapping("/list")
+//    public R<List<Dish>> list(@RequestParam(value = "categoryId", required = false) Long categoryId, @RequestParam(value = "name", required = false) String name) {
+//        log.info("根据categoryId或者name获取菜品{},{}", categoryId, name);
+//        // 添加查询条件
+//        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.eq(categoryId != null, Dish::getCategoryId, categoryId).like(name != null, Dish::getName, name).eq(Dish::getStatus, 1).orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+//        // 查询数据
+//        List<Dish> list = dishService.list(queryWrapper);
+//        return R.success(list);
+//    }
     @GetMapping("/list")
-    public R<List<Dish>> list(@RequestParam(value = "categoryId", required = false) Long categoryId, @RequestParam(value = "name", required = false) String name) {
-        log.info("根据categoryId或者name获取菜品{},{}", categoryId, name);
+    public R<List<DishDto>> list(@RequestParam(value = "categoryId", required = false) Long categoryId, @RequestParam(value = "name", required = false) String name, @RequestParam(value = "status", required = false) Long status) {
+        log.info("根据categoryId或者name获取菜品{},{},{}", categoryId, name, status);
         // 添加查询条件
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(categoryId != null, Dish::getCategoryId, categoryId).like(name != null, Dish::getName, name).eq(Dish::getStatus, 1).orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
         // 查询数据
         List<Dish> list = dishService.list(queryWrapper);
-        return R.success(list);
+
+        List<DishDto> dishDtoList = list.stream().map((item) -> {
+            List<DishFlavor> flavors = dishFlavorService.list(new LambdaQueryWrapper<DishFlavor>().eq(DishFlavor::getDishId, item.getId()));
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(item, dishDto);
+            dishDto.setFlavors(flavors);
+            return dishDto;
+        }).collect(Collectors.toList());
+
+        return R.success(dishDtoList);
     }
 }

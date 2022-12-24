@@ -38,48 +38,6 @@ VALUES ('1', '管理员', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '13812312
         '2021-05-06 17:20:07', '2021-05-10 02:24:09', '1', '1');
 
 -- ----------------------------
--- Table structure for address_book
--- ----------------------------
-DROP TABLE IF EXISTS `address_book`;
-CREATE TABLE `address_book`
-(
-    `id`            bigint(20)                   NOT NULL COMMENT '主键',
-    `user_id`       bigint(20)                   NOT NULL COMMENT '用户id',
-    `consignee`     varchar(50) COLLATE utf8_bin NOT NULL COMMENT '收货人',
-    `sex`           tinyint(4)                   NOT NULL COMMENT '性别 0 女 1 男',
-    `phone`         varchar(11) COLLATE utf8_bin NOT NULL COMMENT '手机号',
-    `province_code` varchar(12) CHARACTER SET utf8mb4     DEFAULT NULL COMMENT '省级区划编号',
-    `province_name` varchar(32) CHARACTER SET utf8mb4     DEFAULT NULL COMMENT '省级名称',
-    `city_code`     varchar(12) CHARACTER SET utf8mb4     DEFAULT NULL COMMENT '市级区划编号',
-    `city_name`     varchar(32) CHARACTER SET utf8mb4     DEFAULT NULL COMMENT '市级名称',
-    `district_code` varchar(12) CHARACTER SET utf8mb4     DEFAULT NULL COMMENT '区级区划编号',
-    `district_name` varchar(32) CHARACTER SET utf8mb4     DEFAULT NULL COMMENT '区级名称',
-    `detail`        varchar(200) CHARACTER SET utf8mb4    DEFAULT NULL COMMENT '详细地址',
-    `label`         varchar(100) CHARACTER SET utf8mb4    DEFAULT NULL COMMENT '标签',
-    `is_default`    tinyint(1)                   NOT NULL DEFAULT '0' COMMENT '默认 0 否 1是',
-    `create_time`   datetime                     NOT NULL COMMENT '创建时间',
-    `update_time`   datetime                     NOT NULL COMMENT '更新时间',
-    `create_user`   bigint(20)                   NOT NULL COMMENT '创建人',
-    `update_user`   bigint(20)                   NOT NULL COMMENT '修改人',
-    `is_deleted`    int(11)                      NOT NULL DEFAULT '0' COMMENT '是否删除',
-    PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8
-  COLLATE = utf8_bin COMMENT ='地址管理';
-
--- ----------------------------
--- Records of address_book
--- ----------------------------
-INSERT INTO `address_book`
-VALUES ('1417414526093082626', '1417012167126876162', '小明', '1', '13812345678', null, null, null, null, null, null,
-        '昌平区金燕龙办公楼', '公司', '1', '2021-07-20 17:22:12', '2021-07-20 17:26:33', '1417012167126876162',
-        '1417012167126876162', '0');
-INSERT INTO `address_book`
-VALUES ('1417414926166769666', '1417012167126876162', '小李', '1', '13512345678', null, null, null, null, null, null,
-        '测试', '家', '0', '2021-07-20 17:23:47', '2021-07-20 17:23:47', '1417012167126876162', '1417012167126876162',
-        '0');
-
--- ----------------------------
 -- Table structure for category
 -- ----------------------------
 DROP TABLE IF EXISTS `category`;
@@ -460,59 +418,6 @@ VALUES ('1413389684020682754', '1413342036832100354', '温度', '[\"常温\",\"�
         '2021-07-09 15:12:18', '1', '1', '0');
 
 -- ----------------------------
--- Table structure for orders
--- ----------------------------
-DROP TABLE IF EXISTS `orders`;
-CREATE TABLE `orders`
-(
-    `id`              bigint(20)     NOT NULL COMMENT '主键',
-    `number`          varchar(50) COLLATE utf8_bin  DEFAULT NULL COMMENT '订单号',
-    `status`          int(11)        NOT NULL       DEFAULT '1' COMMENT '订单状态 1待付款，2待派送，3已派送，4已完成，5已取消',
-    `user_id`         bigint(20)     NOT NULL COMMENT '下单用户',
-    `address_book_id` bigint(20)     NOT NULL COMMENT '地址id',
-    `order_time`      datetime       NOT NULL COMMENT '下单时间',
-    `checkout_time`   datetime       NOT NULL COMMENT '结账时间',
-    `pay_method`      int(11)        NOT NULL       DEFAULT '1' COMMENT '支付方式 1微信,2支付宝',
-    `amount`          decimal(10, 2) NOT NULL COMMENT '实收金额',
-    `remark`          varchar(100) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
-    `phone`           varchar(255) COLLATE utf8_bin DEFAULT NULL,
-    `address`         varchar(255) COLLATE utf8_bin DEFAULT NULL,
-    `user_name`       varchar(255) COLLATE utf8_bin DEFAULT NULL,
-    `consignee`       varchar(255) COLLATE utf8_bin DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8
-  COLLATE = utf8_bin COMMENT ='订单表';
-
--- ----------------------------
--- Records of orders
--- ----------------------------
-
--- ----------------------------
--- Table structure for order_detail
--- ----------------------------
-DROP TABLE IF EXISTS `order_detail`;
-CREATE TABLE `order_detail`
-(
-    `id`          bigint(20)     NOT NULL COMMENT '主键',
-    `name`        varchar(50) COLLATE utf8_bin  DEFAULT NULL COMMENT '名字',
-    `image`       varchar(100) COLLATE utf8_bin DEFAULT NULL COMMENT '图片',
-    `order_id`    bigint(20)     NOT NULL COMMENT '订单id',
-    `dish_id`     bigint(20)                    DEFAULT NULL COMMENT '菜品id',
-    `setmeal_id`  bigint(20)                    DEFAULT NULL COMMENT '套餐id',
-    `dish_flavor` varchar(50) COLLATE utf8_bin  DEFAULT NULL COMMENT '口味',
-    `number`      int(11)        NOT NULL       DEFAULT '1' COMMENT '数量',
-    `amount`      decimal(10, 2) NOT NULL COMMENT '金额',
-    PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8
-  COLLATE = utf8_bin COMMENT ='订单明细表';
-
--- ----------------------------
--- Records of order_detail
--- ----------------------------
-
--- ----------------------------
 -- Table structure for setmeal
 -- ----------------------------
 DROP TABLE IF EXISTS `setmeal`;
@@ -582,6 +487,59 @@ VALUES ('1415580119069671426', '1415580119015145474', '1413385247889891330', '�
         '2021-07-15 15:52:55', '2021-07-15 15:52:55', '1415576781934608386', '1415576781934608386', '0');
 
 -- ----------------------------
+-- Table structure for orders
+-- ----------------------------
+DROP TABLE IF EXISTS `orders`;
+CREATE TABLE `orders`
+(
+    `id`              bigint(20)     NOT NULL COMMENT '主键',
+    `number`          varchar(50) COLLATE utf8_bin  DEFAULT NULL COMMENT '订单号',
+    `status`          int(11)        NOT NULL       DEFAULT '1' COMMENT '订单状态 1待付款，2待派送，3已派送，4已完成，5已取消',
+    `user_id`         bigint(20)     NOT NULL COMMENT '下单用户',
+    `address_book_id` bigint(20)     NOT NULL COMMENT '地址id',
+    `order_time`      datetime       NOT NULL COMMENT '下单时间',
+    `checkout_time`   datetime       NOT NULL COMMENT '结账时间',
+    `pay_method`      int(11)        NOT NULL       DEFAULT '1' COMMENT '支付方式 1微信,2支付宝',
+    `amount`          decimal(10, 2) NOT NULL COMMENT '实收金额',
+    `remark`          varchar(100) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
+    `phone`           varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `address`         varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `user_name`       varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `consignee`       varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  COLLATE = utf8_bin COMMENT ='订单表';
+
+-- ----------------------------
+-- Records of orders
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for order_detail
+-- ----------------------------
+DROP TABLE IF EXISTS `order_detail`;
+CREATE TABLE `order_detail`
+(
+    `id`          bigint(20)     NOT NULL COMMENT '主键',
+    `name`        varchar(50) COLLATE utf8_bin  DEFAULT NULL COMMENT '名字',
+    `image`       varchar(100) COLLATE utf8_bin DEFAULT NULL COMMENT '图片',
+    `order_id`    bigint(20)     NOT NULL COMMENT '订单id',
+    `dish_id`     bigint(20)                    DEFAULT NULL COMMENT '菜品id',
+    `setmeal_id`  bigint(20)                    DEFAULT NULL COMMENT '套餐id',
+    `dish_flavor` varchar(50) COLLATE utf8_bin  DEFAULT NULL COMMENT '口味',
+    `number`      int(11)        NOT NULL       DEFAULT '1' COMMENT '数量',
+    `amount`      decimal(10, 2) NOT NULL COMMENT '金额',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  COLLATE = utf8_bin COMMENT ='订单明细表';
+
+-- ----------------------------
+-- Records of order_detail
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for shopping_cart
 -- ----------------------------
 DROP TABLE IF EXISTS `shopping_cart`;
@@ -605,6 +563,48 @@ CREATE TABLE `shopping_cart`
 -- ----------------------------
 -- Records of shopping_cart
 -- ----------------------------
+
+-- ----------------------------
+-- Table structure for address_book
+-- ----------------------------
+DROP TABLE IF EXISTS `address_book`;
+CREATE TABLE `address_book`
+(
+    `id`            bigint(20)                   NOT NULL COMMENT '主键',
+    `user_id`       bigint(20)                   NOT NULL COMMENT '用户id',
+    `consignee`     varchar(50) COLLATE utf8_bin NOT NULL COMMENT '收货人',
+    `sex`           tinyint(4)                   NOT NULL COMMENT '性别 0 女 1 男',
+    `phone`         varchar(11) COLLATE utf8_bin NOT NULL COMMENT '手机号',
+    `province_code` varchar(12) CHARACTER SET utf8mb4     DEFAULT NULL COMMENT '省级区划编号',
+    `province_name` varchar(32) CHARACTER SET utf8mb4     DEFAULT NULL COMMENT '省级名称',
+    `city_code`     varchar(12) CHARACTER SET utf8mb4     DEFAULT NULL COMMENT '市级区划编号',
+    `city_name`     varchar(32) CHARACTER SET utf8mb4     DEFAULT NULL COMMENT '市级名称',
+    `district_code` varchar(12) CHARACTER SET utf8mb4     DEFAULT NULL COMMENT '区级区划编号',
+    `district_name` varchar(32) CHARACTER SET utf8mb4     DEFAULT NULL COMMENT '区级名称',
+    `detail`        varchar(200) CHARACTER SET utf8mb4    DEFAULT NULL COMMENT '详细地址',
+    `label`         varchar(100) CHARACTER SET utf8mb4    DEFAULT NULL COMMENT '标签',
+    `is_default`    tinyint(1)                   NOT NULL DEFAULT '0' COMMENT '默认 0 否 1是',
+    `create_time`   datetime                     NOT NULL COMMENT '创建时间',
+    `update_time`   datetime                     NOT NULL COMMENT '更新时间',
+    `create_user`   bigint(20)                   NOT NULL COMMENT '创建人',
+    `update_user`   bigint(20)                   NOT NULL COMMENT '修改人',
+    `is_deleted`    int(11)                      NOT NULL DEFAULT '0' COMMENT '是否删除',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  COLLATE = utf8_bin COMMENT ='地址管理';
+
+-- ----------------------------
+-- Records of address_book
+-- ----------------------------
+INSERT INTO `address_book`
+VALUES ('1417414526093082626', '1417012167126876162', '小明', '1', '13812345678', null, null, null, null, null, null,
+        '昌平区金燕龙办公楼', '公司', '1', '2021-07-20 17:22:12', '2021-07-20 17:26:33', '1417012167126876162',
+        '1417012167126876162', '0');
+INSERT INTO `address_book`
+VALUES ('1417414926166769666', '1417012167126876162', '小李', '1', '13512345678', null, null, null, null, null, null,
+        '测试', '家', '0', '2021-07-20 17:23:47', '2021-07-20 17:23:47', '1417012167126876162', '1417012167126876162',
+        '0');
 
 -- ----------------------------
 -- Table structure for user

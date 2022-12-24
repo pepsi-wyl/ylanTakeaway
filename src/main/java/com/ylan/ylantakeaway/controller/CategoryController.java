@@ -84,8 +84,13 @@ public class CategoryController {
      * @return
      */
     @GetMapping("/list")
-    public R<List<Category>> listCategory(@RequestParam(value = "type", required = true) Integer type) {
-        log.info("获取{}分类", type == 1 ? "菜品" : "套餐");
+    public R<List<Category>> listCategory(@RequestParam(value = "type", required = false) Integer type) {
+        if (type != null) {
+            log.info("获取{}分类", type == 1 ? "菜品" : "套餐");
+        }
+        if (type == null) {
+            log.info("获取套餐和菜品分类");
+        }
         return categoryService.listCategory(type);
     }
 }

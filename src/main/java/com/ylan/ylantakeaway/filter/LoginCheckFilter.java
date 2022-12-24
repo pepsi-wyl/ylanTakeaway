@@ -39,6 +39,8 @@ public class LoginCheckFilter implements Filter {
         String[] urls = new String[]{
                 "/employee/login",
                 "/employee/logout",
+                "/user/login",
+                "/user/sendMsg",
                 "/backend/**",
                 "/front/**",
         };
@@ -64,7 +66,6 @@ public class LoginCheckFilter implements Filter {
      */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
@@ -72,7 +73,6 @@ public class LoginCheckFilter implements Filter {
 
         // 获取请求
         String url = request.getRequestURI();
-
         // 路径匹配
         boolean check = check(url);
 
@@ -85,7 +85,7 @@ public class LoginCheckFilter implements Filter {
 
         // 需要处理，暂时不放行
         Object employeeID = request.getSession().getAttribute("employee");
-        // 存在Session对象，放行
+        // 后台管理，存在Session对象，放行
         if (employeeID != null) {
             log.info("拦截的请求:{}已登陆不需要处理", url);
 
@@ -95,6 +95,20 @@ public class LoginCheckFilter implements Filter {
             filterChain.doFilter(request, response);
             return;
         }
+
+        // 需要处理，暂时不放行
+        Object userID = request.getSession().getAttribute("user");
+        // 后台管理，存在Session对象，放行
+        if (userID != null) {
+            log.info("拦截的请求:{}已登陆不需要处理", url);
+
+            // 设置当前登陆用户的ID,线程内共享
+            BaseContext.setCurrentId((Long) userID);
+
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // 不存在Session对象，不放行
         log.info("拦截的请求:{}需要处理", url);
         response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));

@@ -1,17 +1,22 @@
 package com.ylan.ylantakeaway.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ylan.ylantakeaway.common.R;
-import com.ylan.ylantakeaway.dto.DishDto;
 import com.ylan.ylantakeaway.dto.SetmealDto;
 import com.ylan.ylantakeaway.entity.Dish;
 import com.ylan.ylantakeaway.entity.Setmeal;
+import com.ylan.ylantakeaway.entity.SetmealDish;
+import com.ylan.ylantakeaway.service.DishService;
+import com.ylan.ylantakeaway.service.SetmealDishService;
 import com.ylan.ylantakeaway.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 套餐控制器
@@ -30,6 +35,12 @@ public class SetmealController {
      */
     @Autowired
     private SetmealService setmealService;
+
+    @Autowired
+    private SetmealDishService setmealDishService;
+
+    @Autowired
+    private DishService dishService;
 
     /**
      * 添加套餐
@@ -119,6 +130,48 @@ public class SetmealController {
         setmealService.updateBatchById(list);
 
         return R.success("套餐启售和停售成功");
+    }
+
+    /**
+     * 根据categoryId或者name获取菜品
+     *
+     * @param categoryId
+     * @param name
+     * @param status
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<Setmeal>> list(@RequestParam(value = "categoryId", required = false) Long categoryId, @RequestParam(value = "name", required = false) String name, @RequestParam(value = "status", required = false) Long status) {
+        log.info("根据categoryId或者name获取套餐{},{},{}", categoryId, name, status);
+        // 添加查询条件
+        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper
+                .eq(categoryId != null, Setmeal::getCategoryId, categoryId)
+                .like(name != null, Setmeal::getName, name)
+                .eq(Setmeal::getStatus, 1)
+                .orderByDesc(Setmeal::getUpdateTime);
+        // 查询数据
+        List<Setmeal> list = setmealService.list(queryWrapper);
+
+        return R.success(list);
+    }
+
+    /**
+     * 根据套餐ID获取套餐下的菜品
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("/dish/{id}")
+    public R<List<Dish>> dish(@PathVariable Long id) {
+        log.info("根据套餐ID获取套餐下的菜品", id);
+        List<SetmealDish> list = setmealDishService.list(new LambdaQueryWrapper<SetmealDish>().eq(id != null, SetmealDish::getSetmealId, id));
+
+        List<Dish> dishes = list.stream().map(
+                (item) -> dishService.getById(item.getDishId())
+        ).collect(Collectors.toList());
+
+        return R.success(dishes);
     }
 
 }

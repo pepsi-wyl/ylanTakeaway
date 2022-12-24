@@ -27,13 +27,9 @@ public class MybatisPlusHandler implements MetaObjectHandler {
      */
     @Override
     public void insertFill(MetaObject metaObject) {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        Long empId = (Long) request.getSession().getAttribute("employee");
         this.setFieldValByName("createTime", new Date(), metaObject);
-        // 使用RequestContextHolder获取Session
-        this.setFieldValByName("createUser", empId, metaObject);
+        this.setFieldValByName("createUser", BaseContext.getCurrentId(), metaObject);
         this.setFieldValByName("updateTime", new Date(), metaObject);
-        // 使用ThreadLocal获取Session中的值
         this.setFieldValByName("updateUser", BaseContext.getCurrentId(), metaObject);
     }
 
@@ -44,9 +40,7 @@ public class MybatisPlusHandler implements MetaObjectHandler {
      */
     @Override
     public void updateFill(MetaObject metaObject) {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        Long empId = (Long) request.getSession().getAttribute("employee");
         this.setFieldValByName("updateTime", new Date(), metaObject);
-        this.setFieldValByName("updateUser", empId, metaObject);
+        this.setFieldValByName("updateUser", BaseContext.getCurrentId(), metaObject);
     }
 }

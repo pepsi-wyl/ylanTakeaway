@@ -121,7 +121,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     public R<List<Category>> listCategory(Integer type) {
         LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<>();
         // 添加查询条件
-        queryWrapper.eq(Category::getType, type).orderByAsc(Category::getSort).orderByDesc(Category::getUpdateTime);
+        queryWrapper.eq(type != null, Category::getType, type).orderByAsc(Category::getSort).orderByDesc(Category::getUpdateTime);
         // 执行查询
         List<Category> list = this.list(queryWrapper);
         return R.success(list);
