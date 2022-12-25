@@ -43,7 +43,7 @@ public class UserController {
         if (phoneNumber != null) {
             // 随机生成4位验证码
             String code = SMSUtils.generateValidateCode(4).toString();
-            log.info("发送验证码={}", code);
+            log.info("{}发送验证码={}", phoneNumber, code);
 
             // 发送验证码
             //  SMSUtils.sendMessage(phone, code);
@@ -93,6 +93,21 @@ public class UserController {
             return R.success(u);
         }
         return R.error("登陆失败");
+    }
+
+    /**
+     * 用户退出登陆
+     *
+     * @return
+     */
+    @PostMapping("/loginout")
+    public R<String> loginout() {
+        log.info("用户退出登陆...");
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        request.getSession().removeAttribute("user");
+
+        // 返回成功信息
+        return R.success("退出成功");
     }
 
 }
